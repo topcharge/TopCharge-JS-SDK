@@ -1,11 +1,24 @@
 {
-  "name": "@topcharge/sdk",
+  "name": "@topcharge-app/sdk",
   "version": "1.0.0",
   "description": "Universal JavaScript SDK for the TopCharge merchant API.",
   "license": "MIT",
   "main": "./src/topcharge.js",
   "module": "./src/index.mjs",
   "browser": "./src/topcharge.js",
+  "homepage": "https://topcharge.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/topcharge/TopCharge-JS-SDK.git"
+  },
+  "bugs": {
+    "url": "https://github.com/topcharge/TopCharge-JS-SDK/issues"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
   "exports": {
     ".": {
       "import": "./src/index.mjs",
