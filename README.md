@@ -58,9 +58,6 @@ The API route behind `/api/payments` uses the server-side example above. This pa
 ## Services
 
 ```js
-const batchId = "01..."; // An ID returned by issue() or listBatches().
-const cardId = "01...";  // An ID returned by a card-list operation.
-
 await topcharge.account.verifyCredentials();
 const balance = await topcharge.account.getBalance();
 
@@ -74,14 +71,6 @@ await topcharge.withdrawals.create({
   amount: "50000"
 });
 
-await topcharge.giftCards.issue({ amount: "25000", idempotencyKey: "order-1001-card-01" });
-await topcharge.giftCards.listBatches({ limit: 20 });
-await topcharge.giftCards.getBatch(batchId);
-await topcharge.giftCards.listBatchCards(batchId, { reveal: true });
-await topcharge.giftCards.revokeBatch(batchId, { reason: "Campaign cancelled" });
-await topcharge.giftCards.listCards({ status: "ACTIVE", standalone: true });
-await topcharge.giftCards.getCard(cardId, { reveal: true });
-await topcharge.giftCards.revokeCard(cardId, { reason: "Issued in error" });
 ```
 
 All responses are ordinary JavaScript objects. Failed API calls throw `TopChargeApiError`, which includes `status` and `responseBody`. Every method accepts an optional `{ signal }` final argument for cancellation with `AbortController`.
@@ -102,11 +91,11 @@ export TOPCHARGE_SECRET_KEY='sk_...'
 node tests/integration.cjs payment:smoke
 ```
 
-Each API operation is also separate: `payment:create`, `payment:status`, `payment:cancel`, `account:balance`, `withdrawal:create`, and every `giftcard:*` operation. Run `node tests/integration.cjs help` for inputs. Value-moving operations require an additional `TOPCHARGE_ALLOW_*` confirmation variable.
+Each API operation is also separate: `payment:create`, `payment:status`, `payment:cancel`, `account:balance`, and `withdrawal:create`. Run `node tests/integration.cjs help` for inputs. Value-moving operations require an additional `TOPCHARGE_ALLOW_*` confirmation variable.
 
 ## Reliability
 
-The SDK does not retry requests automatically. Reads can generally be retried; do not blindly retry payment creation or withdrawals after an unknown result. Retry gift-card issuance only with the same persisted idempotency key. Use `AbortController` to bound a request in Node.js or serverless runtimes.
+The SDK does not retry requests automatically. Reads can generally be retried; do not blindly retry payment creation or withdrawals after an unknown result. Use `AbortController` to bound a request in Node.js or serverless runtimes.
 
 ## License
 

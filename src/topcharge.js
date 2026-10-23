@@ -40,7 +40,6 @@
       this.account = new AccountService(this);
       this.payments = new PaymentService(this);
       this.withdrawals = new WithdrawalService(this);
-      this.giftCards = new GiftCardService(this);
     }
 
     async request(method, path, payload, query, signal) {
@@ -113,40 +112,8 @@
     }
   }
 
-  class GiftCardService {
-    constructor(client) { this.client = client; }
-    issue({ amount, idempotencyKey, quantity, name }, options = {}) {
-      return this.client.request("POST", "/api/v1/giftcard/issue", compact({ amount, idempotencyKey, quantity, name }), undefined, options.signal);
-    }
-    listBatches(query = {}, options = {}) {
-      return this.client.request("GET", "/api/v1/giftcard/batch", undefined, pagination(query), options.signal);
-    }
-    getBatch(batchId, options = {}) {
-      return this.client.request("GET", `/api/v1/giftcard/batch/${encodeURIComponent(batchId)}`, undefined, undefined, options.signal);
-    }
-    listBatchCards(batchId, query = {}, options = {}) {
-      return this.client.request("GET", `/api/v1/giftcard/batch/${encodeURIComponent(batchId)}/cards`, undefined, compact({ ...pagination(query), reveal: query.reveal || undefined }), options.signal);
-    }
-    revokeBatch(batchId, { reason } = {}, options = {}) {
-      return this.client.request("POST", `/api/v1/giftcard/batch/${encodeURIComponent(batchId)}/revoke`, compact({ reason }), undefined, options.signal);
-    }
-    listCards(query = {}, options = {}) {
-      return this.client.request("GET", "/api/v1/giftcard/card", undefined, compact({ ...pagination(query), status: query.status, batchId: query.batchId, standalone: query.standalone, reveal: query.reveal || undefined }), options.signal);
-    }
-    getCard(cardId, { reveal = false } = {}, options = {}) {
-      return this.client.request("GET", `/api/v1/giftcard/card/${encodeURIComponent(cardId)}`, undefined, reveal ? { reveal: true } : undefined, options.signal);
-    }
-    revokeCard(cardId, { reason } = {}, options = {}) {
-      return this.client.request("POST", `/api/v1/giftcard/card/${encodeURIComponent(cardId)}/revoke`, compact({ reason }), undefined, options.signal);
-    }
-  }
-
   function compact(object) {
     return Object.fromEntries(Object.entries(object).filter(([, value]) => value !== undefined && value !== null));
-  }
-
-  function pagination({ cursor, limit, sort } = {}) {
-    return compact({ cursor, limit, sort });
   }
 
   function errorMessage(body, status) {

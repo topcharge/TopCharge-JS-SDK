@@ -29,20 +29,6 @@ async function run() {
     case "withdrawal:create":
       confirmation("TOPCHARGE_ALLOW_MONEY_MOVEMENT");
       return print(await client.withdrawals.create({ phoneNumberCountryCode: required("TOPCHARGE_PHONE_COUNTRY_CODE"), phoneNumber: required("TOPCHARGE_PHONE_NUMBER"), amount: required("TOPCHARGE_WITHDRAWAL_AMOUNT") }));
-    case "giftcard:issue":
-      confirmation("TOPCHARGE_ALLOW_VALUE_ISSUANCE");
-      return print(await client.giftCards.issue({ amount: required("TOPCHARGE_GIFTCARD_AMOUNT"), idempotencyKey: required("TOPCHARGE_IDEMPOTENCY_KEY"), quantity: positiveInt("TOPCHARGE_GIFTCARD_QUANTITY"), name: process.env.TOPCHARGE_GIFTCARD_NAME }));
-    case "giftcard:batches": return print(await client.giftCards.listBatches(pagination()));
-    case "giftcard:batch": return print(await client.giftCards.getBatch(required("TOPCHARGE_BATCH_ID")));
-    case "giftcard:batch-cards": return print(await client.giftCards.listBatchCards(required("TOPCHARGE_BATCH_ID"), { ...pagination(), reveal: boolean("TOPCHARGE_REVEAL") }));
-    case "giftcard:revoke-batch":
-      confirmation("TOPCHARGE_ALLOW_VALUE_REVOCATION");
-      return print(await client.giftCards.revokeBatch(required("TOPCHARGE_BATCH_ID"), { reason: process.env.TOPCHARGE_REVOKE_REASON }));
-    case "giftcard:cards": return print(await client.giftCards.listCards({ ...pagination(), status: process.env.TOPCHARGE_GIFTCARD_STATUS, batchId: process.env.TOPCHARGE_BATCH_ID, standalone: nullableBoolean("TOPCHARGE_STANDALONE"), reveal: boolean("TOPCHARGE_REVEAL") }));
-    case "giftcard:card": return print(await client.giftCards.getCard(required("TOPCHARGE_CARD_ID"), { reveal: boolean("TOPCHARGE_REVEAL") }));
-    case "giftcard:revoke-card":
-      confirmation("TOPCHARGE_ALLOW_VALUE_REVOCATION");
-      return print(await client.giftCards.revokeCard(required("TOPCHARGE_CARD_ID"), { reason: process.env.TOPCHARGE_REVOKE_REASON }));
     default: fail(`Unknown action '${action}'. Run: node tests/integration.cjs help`);
   }
 }
@@ -71,13 +57,8 @@ function paymentPayload(label) {
     callbackUrl: process.env.TOPCHARGE_CALLBACK_URL || "https://example.com/topcharge-sdk-webhook"
   };
 }
-function pagination() { return { cursor: process.env.TOPCHARGE_CURSOR, limit: positiveInt("TOPCHARGE_LIMIT"), sort: sort() }; }
 function required(name) { return process.env[name] || fail(`${name} is required.`); }
 function confirmation(name) { if (process.env[name] !== "1") fail(`This action changes money or value. Set ${name}=1 to continue.`); }
-function positiveInt(name) { if (!process.env[name]) return undefined; const value = Number(process.env[name]); return Number.isInteger(value) && value > 0 ? value : fail(`${name} must be a positive integer.`); }
-function sort() { const value = process.env.TOPCHARGE_SORT; return !value || value === "asc" || value === "desc" ? value : fail("TOPCHARGE_SORT must be asc or desc."); }
-function boolean(name) { const value = process.env[name]; if (!value) return false; if (["1", "true", "yes"].includes(value.toLowerCase())) return true; if (["0", "false", "no"].includes(value.toLowerCase())) return false; fail(`${name} must be true or false.`); }
-function nullableBoolean(name) { return process.env[name] ? boolean(name) : undefined; }
 function print(value) { console.log(JSON.stringify(value, null, 2)); }
 function fail(message) { throw new Error(message); }
 function printHelp() { console.log(`TopCharge JavaScript integration examples
@@ -87,6 +68,4 @@ Set TOPCHARGE_RUN_INTEGRATION=1, TOPCHARGE_CLIENT_ID, and TOPCHARGE_SECRET_KEY f
 Account: account:verify | account:balance
 Payment: payment:create | payment:status (TOPCHARGE_PAYMENT_ID) | payment:cancel (TOPCHARGE_PAYMENT_ID) | payment:smoke
 Withdrawal: withdrawal:create (TOPCHARGE_ALLOW_MONEY_MOVEMENT=1 plus recipient variables)
-Gift cards: giftcard:issue | giftcard:batches | giftcard:batch | giftcard:batch-cards | giftcard:cards | giftcard:card | giftcard:revoke-batch | giftcard:revoke-card
-
 Run payment:smoke to create, verify, then cancel a test payment.`); }
