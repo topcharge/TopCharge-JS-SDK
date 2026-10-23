@@ -1,0 +1,29 @@
+{
+  "name": "@topcharge/sdk",
+  "version": "1.0.0",
+  "description": "Universal JavaScript SDK for the TopCharge merchant API.",
+  "license": "MIT",
+  "main": "./src/topcharge.js",
+  "module": "./src/index.mjs",
+  "browser": "./src/topcharge.js",
+  "exports": {
+    ".": {
+      "import": "./src/index.mjs",
+      "require": "./src/topcharge.js",
+      "default": "./src/index.mjs"
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node tests/unit.cjs",
+    "test:integration": "node tests/integration.cjs help"
+  },
+  "keywords": [
+    "topcharge",
+    "payments",
+    "sdk",
+    "javascript"
+  ]
+}
