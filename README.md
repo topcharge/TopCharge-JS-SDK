@@ -8,18 +8,18 @@ Universal, dependency-free JavaScript SDK for Node.js backends and browser bundl
 
 ## Release status
 
-This package is currently installed from this local directory. `@topcharge/sdk` is its intended npm identity, not a claim that it is already published to npm.
+This package is publicly available on npm as [`@topcharge-app/sdk` 1.0.0](https://www.npmjs.com/package/@topcharge-app/sdk).
 
 ## Install locally
 
 ```bash
-npm install /Users/chawan/Desktop/Projects/TopCharge/sdk/js
+npm install @topcharge-app/sdk
 ```
 
 ## Node.js, Express, Next.js API routes, and server actions
 
 ```js
-import { TopChargeClient } from "@topcharge/sdk";
+import { TopChargeClient } from "@topcharge-app/sdk";
 
 const topcharge = new TopChargeClient({
   clientId: process.env.TOPCHARGE_CLIENT_ID,
@@ -39,7 +39,7 @@ console.log(payment.paymentUrl);
 CommonJS works too:
 
 ```js
-const { TopChargeClient } = require("@topcharge/sdk");
+const { TopChargeClient } = require("@topcharge-app/sdk");
 ```
 
 ## Frontend pattern
@@ -100,3 +100,7 @@ The SDK does not retry requests automatically. Reads can generally be retried; d
 ## License
 
 [MIT License](LICENSE)
+
+## Source
+
+[github.com/topcharge/TopCharge-JS-SDK](https://github.com/topcharge/TopCharge-JS-SDK)
